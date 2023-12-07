@@ -4,5 +4,5 @@ from . import controller
 
 urlpatterns = [
     path('posts/', controller.create_new_post),
-    path('posts/{id}/analysis', controller.analysis)
+    path('posts/<int:id>/analysis', controller.analysis)
 ]

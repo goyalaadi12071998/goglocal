@@ -1,7 +1,5 @@
-import json
-
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.http import HttpResponse, JsonResponse
 
 from . import service
 from . import validator
@@ -14,19 +12,19 @@ def create_new_post(request):
     try:
         validator.validate_request_data(payload)
         response = service.create_post(payload, user_id)
-        breakpoint()
-        return Response(json.dumps(response.__dict__))
+        return JsonResponse(response, status=200)
     except Exception as e:
-        return Response(status_code=400)
+        return JsonResponse({"error": str(e)},status=400)
 
 
 @api_view(['GET'])
-def analysis(request):
-    post_id = request.params
+def analysis(request, id):
     user_id = request.headers.get('X-USER-ID')
-
     if not user_id:
-        Response(status_code=400, data='Unauthorized User')
+       return JsonResponse({"message":"Unauthorized User"}, status=400)
 
     try:
-        service
+        resp = service.get_analysis_data(id, user_id)
+        return JsonResponse(resp,status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
